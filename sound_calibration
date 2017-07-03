@@ -1,0 +1,39 @@
+Steps to follow to install the drivers of MC USB-1608G
+
+1) Install build-essentials
+   sudo apt-get install build-essential
+
+2) Install libedev
+   sudo apt-get install libudev-dev libusb-1.0-0-dev libfox-1.6-dev
+
+3) Go to Desktop and install hidapi
+
+ git clone git://github.com/signal11/hidapi.git
+
+ sudo apt-get install autotools-dev autoconf automake libtool
+ cd hidapi
+ sudo ./bootstrap
+ sudo ./configure
+ sudo make
+ sudo make install
+
+
+3) Download 61-mcc.rules from ftp://lx10.tx.ncsu.edu/pub/Linux/drivers by Save link as and install
+   sudo cp 61-mcc.rules /etc/udev/rules.d
+   sudo /sbin/udevadm control --reload-rules
+
+4) Download MCCLIBUSB.1.07.tgz from ftp://lx10.tx.ncsu.edu/pub/Linux/drivers/USB/
+
+ tar zxvf  MCCLIBUSB.1.07.tgz
+ cd mcc-libusb
+ sudo make
+ sudo make install
+ sudo ldconfig
+
+5) Go to Bpod-ZadorLab/Protocols/SoundCalibration/mcc
+ sudo make
+ sudo make install
+ sudo cp read-usb1608G ../
+
+6) Connect the usb plug and test by doing ./read-usb1608G 1 2 10 10000
+If it return 2 values then you are fine.

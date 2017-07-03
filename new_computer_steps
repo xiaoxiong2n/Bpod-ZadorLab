@@ -1,0 +1,80 @@
+These steps are based on Josh Sanders's indications found in sites.google.com/site/bpoddocumentation/installing-bpod/ubuntu14.
+Follow his suggestions for installing Bpod firmware.
+
+1.Install Ubuntu:
+If the new computer has Windows, you can keep it by making a dual Windows/Ubuntu boot. For that, shrink the Windows partition to a sensible size (100Gb) and select manually create partitions during Ubuntu instalation. Design your partition table by allocating space for swap (~2 times RAM size), root (50 Gb) and home (the rest).
+
+If booting from the USB stick gives "failes ... gfxboot" type live and hit enter.
+
+Shrinking the Windows partition can be problematic due to unmovable Windows files. Right click in OS(C:) and go to disk management, shrink Volume. If the partition cannot be shrink to 100GB, use the Event viewer to find which one is the unmovable file. Go to Computer/Manage/Event Viewer/Windows Logs/Application. Click on filter current log and put 259 for event ID. Click on the last event and find the problematic file. If it is related with System Volume Information, go to System protection and turn off System Restore and clean the stored points. Restart and try again. Unmovable files can also come from the virtual memory . Right click in Computer/Properties/Advanced Settings/Performance (Settings)/Advanced Tab/Virtual Memory (change)/No paging file/Set
+
+2. Update Ubuntu.
+
+3. Physically install Xonar DX sound card.
+
+4. Install the linux-lowlatency package:
+Go to terminal. Run sudo apt-get install linux-lowlatency
+
+5. Install Git:
+Run "sudo apt-get install git"
+
+6. Clone the Bpod-ZadorLab folder from github. Open a Terminal and run:
+Go to terminal. Run:	git clone  https://github.com/fedecarne/Bpod-ZadorLab.git.
+			cd Bpod-ZadorLab
+			git pull
+
+7. Install Matlab.
+
+8. Close Matlab. Open a terminal window and add yourself to the “dialout” group:
+Go to terminal. Run: 	sudo usermod -a -G dialout "username"
+
+7. Explain to MATLAB that /dev/ttyACMx are valid serial ports:
+from terminal, launch the editor as root. 
+Go to terminal. Run: 	cd /usr/local/MATLAB/R2014b/bin/glnxa64 
+			sudo gedit java.opts
+
+Paste the following line into the text editor:
+
+    -Dgnu.io.rxtx.SerialPorts=/dev/ttyS0:/dev/ttyS1:/dev/USB0:/dev/ttyACM0
+
+Save and close.
+
+8. Set the sound subsystem to “no attenuation”:
+From terminal, run: alsamixer
+Ensure that Card: shows Xonar DX. Select each slider *EXCEPT for the front L&R* and use the mouse scroll wheel to maximize (0dB gain)
+Press “Esc” to save and exit. Without this step, audio card sync pulses will not be sent.
+
+9. Install PsychToolbox package "octave-psychtoolbox-3" from http://psychtoolbox.org/download/#Linux
+which opens from the Ubuntu Software Manager. Then in Matlab go to usr/share/psychotoolbox-3/ and run DownloadAdditionsForLinux(pwd).
+
+10. Add Bpod-ZadorLab to Matlab path
+
+11. If you have a Windows server in which to synchronize data from several rigs. 
+Get the name of the server (servername) and the name of the folder in which you want your data (sharename) and run:
+sudo apt-get install cifs-utils
+sudo mkdir /media/windowsshare
+
+gedit ~/.smbcredentials
+
+Enter your Windows username and password in the file:
+
+username=msusername
+password=mspassword
+
+Close Editor. Run
+
+sudo gedit /etc/fstab 
+
+Add this line
+
+//servername/sharename /media/windowsshare cifs credentials=/home/ubuntuusername/.smbcredentials,iocharset=utf8,sec=ntlm 0 0 
+
+in zadorlab:
+//science.cshl.edu/Zador /media/windowsshare cifs credentials=/home/rig7/.smbcredentials,iocharset=utf8,sec=ntlm 0 0
+
+Finally, test the fstab entry by issuing
+
+sudo mount -a
+
+If there are no errors, you should test how it works after a reboot. Your remote share should mount automatically. 
+
